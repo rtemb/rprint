@@ -1,0 +1,6 @@
+package: gitlab.com/rtemb/receipt-print
+import:
+- package: github.com/gorilla/mux
+  version: 1.4.0
+- package: github.com/jung-kurt/gofpdf
+  version: 1.0.0 

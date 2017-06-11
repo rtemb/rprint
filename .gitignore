@@ -1,3 +1,5 @@
 .vscode
 vendor
 glide.lock
+receipts
+receipt-print
