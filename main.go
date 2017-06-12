@@ -17,10 +17,6 @@ func main() {
 	if len(port) == 0  {
 		log.Fatal("Required parameter SERVICE_PORT is not set")
 	}
-	addr := os.Getenv("SERVICE_ADDR")
-	if len(addr) == 0  {
-		log.Fatal("Required parameter SERVICE_ADDR is not set")
-	}
 
 	r := router.New()
 	r.Logger = logger
@@ -31,8 +27,8 @@ func main() {
 	r.POST("/createN", CreateReceiptN)
 	r.GET("/pdf/:docName", giveFile)
 	
-	log.Info("Service starting up... ", addr, ":", port)
-	r.Listen(addr + ":" + port)
+	log.Info("Service starting up... http://127.0.0.1:" , port)
+	r.Listen(":" + port)
 
 }
 
