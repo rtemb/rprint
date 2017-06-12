@@ -13,6 +13,8 @@ import (
 
 	"github.com/takama/router"
 	"github.com/jung-kurt/gofpdf"
+	rn "gitlab.com/rtemb/receipt-print/receiptCustom"
+	rs "gitlab.com/rtemb/receipt-print/receiptSchema"
 )
 
 // root derictory
@@ -38,28 +40,36 @@ func GetAllReceipts(c *router.Control) {
 	c.Code(http.StatusOK).Body(receipts)
 }
 
-func CreateReceipt(c *router.Control) {
-	var receipt Receipt
-	response := make(map[string]string)
+func CreateReceiptN(c *router.Control) {
+	var Rn rn.PdfDocument
 	data, _ := ioutil.ReadAll(c.Request.Body)
-	json.Unmarshal(data, &receipt)
+	json.Unmarshal(data, &Rn)
+	c.Code(http.StatusOK).Body(Rn)
+}
+
+func CreateReceipt(c *router.Control) {
+	var Rs rs.ReceiptData
+	data, _ := ioutil.ReadAll(c.Request.Body)
+	json.Unmarshal(data, &Rs)
 
 	currDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	filePath := currDir + "/receipts/" 
+	fileName := strconv.FormatInt(time.Now().UnixNano(), 10)
+	ext := ".pdf"
+
 	receiptsDir := filepath.Join(currDir, "receipts")
 	os.MkdirAll(receiptsDir, 0700)
 
-	fileName := CreatePdfFile(receipt)
+	Rs.Print(filePath + fileName + ext)
+	
+	response := make(map[string]string)
 	response["link"] =  c.Request.Host + "/pdf/" + fileName
 	c.Code(http.StatusOK).Body(response)
 }
 
 func giveFile(c *router.Control) {
 	file, _ := ioutil.ReadFile("receipts/" + c.Get(":docName") + ".pdf")
-	// c.Code(http.StatusOK).Body(bytes.NewReader(file))
-	// http.ServeContent(c.Writer, c.Request, c.Get(":docName"), time.Now(), bytes.NewReader(file))
 	http.ServeContent(c.Writer, c.Request, "myfile", time.Now(), bytes.NewReader(file))
-	// http.ServeContent(w, r, "myfile", time.Now(), bytes.NewReader(file))
-
 }
 
 func CreatePdfFile(receipt Receipt) string {
@@ -73,7 +83,7 @@ func CreatePdfFile(receipt Receipt) string {
 	itemPrice	:= strconv.FormatFloat(float64(receipt.Price), 'f', 2, 64)
 	receiptBill := string(receipt.Bill)
 
-	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf := gofpdf.New("P", "mm", "A5", "")
 	pdf.SetFontLocation(currDir + "/fonts")
     pdf.AddFont("Helvetica", "", "helvetica_1251.json")
     pdf.AddPage()

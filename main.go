@@ -26,8 +26,9 @@ func main() {
 	r.Logger = logger
 
 	r.GET("/", root)
-	r.GET("/all", GetAllReceipts)
+	r.GET("/test", GetAllReceipts)
 	r.POST("/create", CreateReceipt)
+	r.POST("/createN", CreateReceiptN)
 	r.GET("/pdf/:docName", giveFile)
 	
 	log.Info("Service starting up... ", addr, ":", port)
