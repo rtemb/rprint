@@ -13,7 +13,7 @@ import (
 
 	"github.com/takama/router"
 	"github.com/jung-kurt/gofpdf"
-	rn "gitlab.com/rtemb/receipt-print/receiptCustom"
+	rc "gitlab.com/rtemb/receipt-print/receiptCustom"
 	rs "gitlab.com/rtemb/receipt-print/receiptSchema"
 )
 
@@ -31,7 +31,7 @@ func logger(c *router.Control) {
 	log.Infof("%s %s %s", remoteAddr, c.Request.Method, c.Request.URL.Path)
 }
 
-// Return all receipts
+// GetAllReceipts returns all receipts
 func GetAllReceipts(c *router.Control) {
 	receipts := Receipts{
 		Receipt{Name: "item1", Price: 1.99, Bill: "18490000009984"},
@@ -40,11 +40,13 @@ func GetAllReceipts(c *router.Control) {
 	c.Code(http.StatusOK).Body(receipts)
 }
 
-func CreateReceiptN(c *router.Control) {
-	var Rn rn.PdfDocument
+// CreateCustom prins custom receipt
+func CreateCustom(c *router.Control) {
+	var Rc rc.PdfDocument
 	data, _ := ioutil.ReadAll(c.Request.Body)
-	json.Unmarshal(data, &Rn)
-	c.Code(http.StatusOK).Body(Rn)
+	json.Unmarshal(data, &Rc)
+	// todo add printing
+	c.Code(http.StatusOK).Body(Rc)
 }
 
 func CreateReceipt(c *router.Control) {

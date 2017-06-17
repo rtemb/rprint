@@ -24,7 +24,7 @@ func main() {
 	r.GET("/", root)
 	r.GET("/test", GetAllReceipts)
 	r.POST("/create", CreateReceipt)
-	r.POST("/createN", CreateReceiptN)
+	r.POST("/createcustom", CreateCustom)
 	r.GET("/pdf/:docName", giveFile)
 	
 	log.Info("Service starting up... http://127.0.0.1:" , port)
