@@ -1,0 +1,23 @@
+all: push
+
+BUILDTAGS=
+
+# Use the 0.0.0 tag for testing, it shouldn't clobber any release builds
+APP?=receipt-print
+USERSPACE?=rtemb
+RELEASE?=0.1.0
+PROJECT?=gitlab.com/${USERSPACE}/${APP}
+GOOS?=linux
+SERVICE_PORT?=8081
+
+fmt:
+  @echo "+ $@"
+  @go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list ${PROJECT}/... | grep -v vendor) | xargs -L 1 sh -c
+
+vet:
+  @echo "+ $@"
+  @go vet $(shell go list ${PROJECT}/... | grep -v vendor)
+
+test: vendor fmt vet
+  @echo "+ $@"
+  @go test -v -race -tags "$(BUILDTAGS) cgo" $(shell go list ${PROJECT}/... | grep -v vendor)
