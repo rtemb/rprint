@@ -7,6 +7,8 @@ before_script:
   - go version
   - echo $CI_BUILD_REF
   - echo $CI_PROJECT_DIR
+  - go get -u github.com/Masterminds/glide
+  - glide install
 
 stages:
   - test
