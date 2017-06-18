@@ -41,6 +41,7 @@ func GetAllReceipts(c *router.Control) {
 }
 
 // CreateCustom prins custom receipt
+// not implemented yet !!
 func CreateCustom(c *router.Control) {
 	var Rc rc.PdfDocument
 	data, _ := ioutil.ReadAll(c.Request.Body)
@@ -49,17 +50,26 @@ func CreateCustom(c *router.Control) {
 	c.Code(http.StatusOK).Body(Rc)
 }
 
+//CreateReceipt print receipt and put it to filesystem
+// in ./receipts folder
 func CreateReceipt(c *router.Control) {
 	var Rs rs.ReceiptData
-	data, _ := ioutil.ReadAll(c.Request.Body)
+	data, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Fatalf("Error due reading request body: %s", err)
+	}
 	json.Unmarshal(data, &Rs)
 
-	currDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+    currDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Can't get current app dirr: %s", err)
+	}
+
 	filePath := currDir + "/receipts/" 
 	fileName := strconv.FormatInt(time.Now().UnixNano(), 10)
 	ext := ".pdf"
 
-	receiptsDir := filepath.Join(currDir, "receipts")
+	receiptsDir := currDir + "/receipts"
 	os.MkdirAll(receiptsDir, 0700)
 
 	Rs.Print(filePath + fileName + ext)

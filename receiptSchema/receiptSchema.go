@@ -1,8 +1,6 @@
 package receiptCustom
 
 import (
-	// "errors"
-	"path/filepath"
 	"os"
 
 	gofpdf "github.com/jung-kurt/gofpdf"
@@ -44,8 +42,10 @@ func (rd *ReceiptData) Print(ffName string) {
 }
 
 func printDefaultReceipt(pd *ReceiptData, ffName string) {
-	currDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	// rWidth := 100
+    currDir, err := os.Getwd()
+    if err != nil {
+		log.Fatalf("Can't get current app dirr: %s", err)
+    }
 	pdf := gofpdf.New("P", "mm", "A5", "")
 	pdf.SetFontLocation(currDir + "/fonts")
     pdf.AddFont("Helvetica", "", "helvetica_1251.json")
@@ -84,9 +84,9 @@ func printDefaultReceipt(pd *ReceiptData, ffName string) {
 	pdf.Ln(1)
 	printLine("Purchase Date:", pdf, 0, 7, 0, "L")
 	printLine(pd.ReceiptS.Date, pdf, 0, 7, 2, "R")
-    err := pdf.OutputFileAndClose(ffName)
-    if err != nil {
-		log.Fatal("Can't write receipt to pdf file")
+    errSave := pdf.OutputFileAndClose(ffName)
+    if errSave != nil {
+		log.Fatalf("Can't write receipt to pdf file: %s", errSave)
     }
 }
 
