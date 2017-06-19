@@ -1,7 +1,16 @@
 image: golang:1.7
 
 variables:
-  REPO_NAME: gitlab.com/rtemb/receipt-print
+  APP: receipt-print
+  USERSPACE: rtemb
+  REPO_NAME: gitlab.com/USERSPACE/APP
+  RELEASE: 0.0.1
+  GOOS: linux
+  SERVICE_PORT: 8081
+  CONTAINER_NAME: USERSPACE/APP
+  COMMIT: git-$(shell git rev-parse --short HEAD)
+  REPO_INFO: $(shell git config --get remote.origin.url)
+
 
 before_script:
   - go version
@@ -11,8 +20,16 @@ before_script:
   - glide install
 
 stages:
-  - test
+  - formating
   - build
+  - test
+
+format-sources:
+  stage: formating
+  script: 
+    - go vet $(shell go list $PROJECT/... | grep -v vendor)
+    - go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list ${PROJECT}/... | grep -v vendor) | xargs -L 1 sh -c
+
 
 test-project:
   stage: test
