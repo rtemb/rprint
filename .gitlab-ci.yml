@@ -20,8 +20,8 @@ before_script:
   - glide install
 
 stages:
-  # - formating
-  # - test
+  - formating
+  - test
   - build
 
 format-sources:
