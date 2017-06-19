@@ -3,8 +3,8 @@ package receiptCustom
 import (
 	"os"
 
-	gofpdf "github.com/jung-kurt/gofpdf"
 	"github.com/Sirupsen/logrus"
+	gofpdf "github.com/jung-kurt/gofpdf"
 	"strconv"
 )
 
@@ -13,26 +13,26 @@ const Default_Schema = "default"
 var log = logrus.New()
 
 type ReceiptData struct {
-	Schema		string `json:"schema"`
-	ReceiptS	*ReceiptS
+	Schema   string `json:"schema"`
+	ReceiptS *ReceiptS
 }
 
 type ReceiptS struct {
-	MPlaceName		string `json:"MPlaceName"`
-	MPlaceAddress	string `json:"MPlaceAddress"`
-	MPlaceINN		string `json:"MPlaceINN"`
-	OperationType	string `json:"OperationType"`
-	Items			[]*Item
-	TaxPercent		string `json:"TaxPercent"`
-	Total			float64 `json:"Total"`
-	FiscalNumber	string `json:"FiscalNumber"`
-	Date			string `json:"Date"`
+	MPlaceName    string `json:"MPlaceName"`
+	MPlaceAddress string `json:"MPlaceAddress"`
+	MPlaceINN     string `json:"MPlaceINN"`
+	OperationType string `json:"OperationType"`
+	Items         []*Item
+	TaxPercent    string  `json:"TaxPercent"`
+	Total         float64 `json:"Total"`
+	FiscalNumber  string  `json:"FiscalNumber"`
+	Date          string  `json:"Date"`
 }
 
 type Item struct {
-	Name		string	`json:"Name"`
-	Quantity	float64 `json:"Quantity"`
-	Price		float64 `json:"Price"`
+	Name     string  `json:"Name"`
+	Quantity float64 `json:"Quantity"`
+	Price    float64 `json:"Price"`
 }
 
 func (rd *ReceiptData) Print(ffName string) {
@@ -42,16 +42,16 @@ func (rd *ReceiptData) Print(ffName string) {
 }
 
 func printDefaultReceipt(pd *ReceiptData, ffName string) {
-    currDir, err := os.Getwd()
-    if err != nil {
+	currDir, err := os.Getwd()
+	if err != nil {
 		log.Fatalf("Can't get current app dirr: %s", err)
-    }
+	}
 	pdf := gofpdf.New("P", "mm", "A5", "")
 	pdf.SetFontLocation(currDir + "/fonts")
-    pdf.AddFont("Helvetica", "", "helvetica_1251.json")
-    pdf.AddPage()
-    pdf.SetFont("Helvetica", "", 16)
-    // tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
+	pdf.AddFont("Helvetica", "", "helvetica_1251.json")
+	pdf.AddPage()
+	pdf.SetFont("Helvetica", "", 16)
+	// tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
 	// pdf.CellFormat(125, 50, tr(pd.ReceiptS.MPlaceName), "", 1, "C", false, 0, "")
 	pdf.Ln(4)
 	printLine(pd.ReceiptS.MPlaceName, pdf, 0, 7, 2, "C")
@@ -84,17 +84,16 @@ func printDefaultReceipt(pd *ReceiptData, ffName string) {
 	pdf.Ln(1)
 	printLine("Purchase Date:", pdf, 0, 7, 0, "L")
 	printLine(pd.ReceiptS.Date, pdf, 0, 7, 2, "R")
-    errSave := pdf.OutputFileAndClose(ffName)
-    if errSave != nil {
+	errSave := pdf.OutputFileAndClose(ffName)
+	if errSave != nil {
 		log.Fatalf("Can't write receipt to pdf file: %s", errSave)
-    }
+	}
 }
 
 func printLine(str string, pdf *gofpdf.Fpdf, y float64, x float64, nl int, align string) {
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
 	if len(str) > 50 {
-		pdf.CellFormat(y, x, tr(str[:50]), "", nl, align, false, 0, "")	
+		pdf.CellFormat(y, x, tr(str[:50]), "", nl, align, false, 0, "")
 	}
-	pdf.CellFormat(y, x, tr(str), "", nl, align, false, 0, "")	
+	pdf.CellFormat(y, x, tr(str), "", nl, align, false, 0, "")
 }
-

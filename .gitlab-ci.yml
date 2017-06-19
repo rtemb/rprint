@@ -20,7 +20,7 @@ test-project:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME
     - cd $GOPATH/src/$REPO_NAME
-    - go test $(go list ./... | grep -v /vendor/)
+    - go test -v -race $(go list ./... | grep -v /vendor/)
 
 build-project:
   stage: build

@@ -1,18 +1,18 @@
 package main
 
 import (
-	"io/ioutil"
-	"path/filepath"
-	"encoding/json"
-	"os"
-	"time"
 	"bytes"
-	"strconv"	
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
 
-	"github.com/takama/router"
 	"github.com/jung-kurt/gofpdf"
+	"github.com/takama/router"
 	rc "gitlab.com/rtemb/receipt-print/receiptCustom"
 	rs "gitlab.com/rtemb/receipt-print/receiptSchema"
 )
@@ -60,12 +60,12 @@ func CreateReceipt(c *router.Control) {
 	}
 	json.Unmarshal(data, &Rs)
 
-    currDir, err := os.Getwd()
+	currDir, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Can't get current app dirr: %s", err)
 	}
 
-	filePath := currDir + "/receipts/" 
+	filePath := currDir + "/receipts/"
 	fileName := strconv.FormatInt(time.Now().UnixNano(), 10)
 	ext := ".pdf"
 
@@ -73,9 +73,9 @@ func CreateReceipt(c *router.Control) {
 	os.MkdirAll(receiptsDir, 0700)
 
 	Rs.Print(filePath + fileName + ext)
-	
+
 	response := make(map[string]string)
-	response["link"] =  c.Request.Host + "/pdf/" + fileName
+	response["link"] = c.Request.Host + "/pdf/" + fileName
 	c.Code(http.StatusOK).Body(response)
 }
 
@@ -86,33 +86,33 @@ func giveFile(c *router.Control) {
 
 func CreatePdfFile(receipt Receipt) string {
 	currDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	filePath := currDir + "/receipts/" 
+	filePath := currDir + "/receipts/"
 	fileName := strconv.FormatInt(time.Now().UnixNano(), 10)
 	ext := ".pdf"
 
-	receiptId	:= strconv.Itoa(receipt.Id)
-	itemName	:= string(receipt.Name)
-	itemPrice	:= strconv.FormatFloat(float64(receipt.Price), 'f', 2, 64)
+	receiptId := strconv.Itoa(receipt.Id)
+	itemName := string(receipt.Name)
+	itemPrice := strconv.FormatFloat(float64(receipt.Price), 'f', 2, 64)
 	receiptBill := string(receipt.Bill)
 
 	pdf := gofpdf.New("P", "mm", "A5", "")
 	pdf.SetFontLocation(currDir + "/fonts")
-    pdf.AddFont("Helvetica", "", "helvetica_1251.json")
-    pdf.AddPage()
-    pdf.SetFont("Helvetica", "", 16)
-    tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
+	pdf.AddFont("Helvetica", "", "helvetica_1251.json")
+	pdf.AddPage()
+	pdf.SetFont("Helvetica", "", 16)
+	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
 	pdf.CellFormat(67, 10, tr("Чек за покупку на сайте "), "", 0, "L", false, 0, "")
 	pdf.SetTextColor(6, 69, 173)
 	pdf.CellFormat(0, 10, "www.rtemb.com", "", 1, "L", false, 0, "http://www.rtemb.com")
 	pdf.SetTextColor(0, 0, 0)
-	pdf.CellFormat(0, 7, tr("Id чека: ") + receiptId, "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 7, tr("Наименование товара: " + itemName), "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 7, tr("Цена: ") + itemPrice, "", 1, "L", false, 0, "")
-	pdf.CellFormat(0, 7, tr("Номер транзакции: ") + receiptBill, "", 1, "L", false, 0, "")
-	pdf.ImageOptions(currDir + "/images/qrcode.png", 75, 0, 50, 50, true, gofpdf.ImageOptions{ImageType: "PNG", ReadDpi: false}, 0, "")
-    err := pdf.OutputFileAndClose(filePath + fileName + ext)
-    if err != nil {
-        log.Println(err)
-    }
+	pdf.CellFormat(0, 7, tr("Id чека: ")+receiptId, "", 1, "L", false, 0, "")
+	pdf.CellFormat(0, 7, tr("Наименование товара: "+itemName), "", 1, "L", false, 0, "")
+	pdf.CellFormat(0, 7, tr("Цена: ")+itemPrice, "", 1, "L", false, 0, "")
+	pdf.CellFormat(0, 7, tr("Номер транзакции: ")+receiptBill, "", 1, "L", false, 0, "")
+	pdf.ImageOptions(currDir+"/images/qrcode.png", 75, 0, 50, 50, true, gofpdf.ImageOptions{ImageType: "PNG", ReadDpi: false}, 0, "")
+	err := pdf.OutputFileAndClose(filePath + fileName + ext)
+	if err != nil {
+		log.Println(err)
+	}
 	return fileName
 }
