@@ -21,15 +21,14 @@ before_script:
 
 stages:
   - formating
-  - build
   - test
+  - build
 
 format-sources:
   stage: formating
   script: 
     - go vet $(shell go list $REPO_NAME/... | grep -v vendor)
     - go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list $REPO_NAME/... | grep -v vendor) | xargs -L 1 sh -c
-
 
 test-project:
   stage: test
@@ -45,4 +44,4 @@ build-project:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME/
     - cd $GOPATH/src/$REPO_NAME
-    - go build 
+    - CGO_ENABLED=0 GOOS=$GOOS go build -a -installsuffix cgo -ldflags "-s -w -X $REPO_NAME/version.RELEASE=$RELEASE -X $REPO_NAME/version.COMMIT=$COMMIT -X $REPO_NAME/version.REPO=$REPO_INFO" -o $APP
