@@ -20,8 +20,8 @@ before_script:
   - glide install
 
 stages:
-  - formating
-  - test
+  # - formating
+  # - test
   - build
 
 format-sources:
@@ -43,9 +43,8 @@ build-project:
   script:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME/
-    - mkdir -p $CI_PROJECT_DIR/artifacts
     - cd $GOPATH/src/$REPO_NAME
-    - cd artifacts && CGO_ENABLED=0 GOOS=$GOOS go build -o $CI_PROJECT_DIR/artifacts && cd ..
+    - CGO_ENABLED=0 GOOS=$GOOS go build
   artifacts:
     paths:
-      - artifacts
+      - $CI_PROJECT_DIR
