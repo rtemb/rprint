@@ -43,6 +43,8 @@ build-project:
   script:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME/
-    - mkdir -p $CI_PROJECT_DIR/artifacts
     - cd $GOPATH/src/$REPO_NAME
-    - cd api && CGO_ENABLED=0 GOOS=$GOOS go build -o $CI_PROJECT_DIR/artifacts/api && cd ..
+    - CGO_ENABLED=0 GOOS=$GOOS go build
+  artifacts:
+    paths:
+      - /
