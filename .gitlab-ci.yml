@@ -46,7 +46,7 @@ build-project:
     - mkdir -p $CI_PROJECT_DIR/artifacts
     - cd $GOPATH/src/$REPO_NAME
     - CGO_ENABLED=0 GOOS=$GOOS go build
-    - mv $GOPATH/src/$REPO_NAME/receipt-print $CI_PROJECT_DIR/artifacts
+    - cp $GOPATH/src/$REPO_NAME/receipt-print $CI_PROJECT_DIR/artifacts
   artifacts:
     paths:
       - $CI_PROJECT_DIR/artifacts
