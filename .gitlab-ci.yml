@@ -3,11 +3,11 @@ image: golang:1.7
 variables:
   APP: receipt-print
   USERSPACE: rtemb
-  REPO_NAME: gitlab.com/USERSPACE/APP
+  REPO_NAME: gitlab.com/$USERSPACE/$APP
   RELEASE: 0.0.1
   GOOS: linux
   SERVICE_PORT: 8081
-  CONTAINER_NAME: USERSPACE/APP
+  CONTAINER_NAME: $USERSPACE/$APP
   COMMIT: git-$(shell git rev-parse --short HEAD)
   REPO_INFO: $(shell git config --get remote.origin.url)
 
@@ -27,8 +27,8 @@ stages:
 format-sources:
   stage: formating
   script: 
-    - go vet $(shell go list $PROJECT/... | grep -v vendor)
-    - go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list ${PROJECT}/... | grep -v vendor) | xargs -L 1 sh -c
+    - go vet $(shell go list $REPO_NAME/... | grep -v vendor)
+    - go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list $REPO_NAME/... | grep -v vendor) | xargs -L 1 sh -c
 
 
 test-project:
@@ -44,6 +44,5 @@ build-project:
   script:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME/
-    - mkdir -p $CI_PROJECT_DIR/artifacts
     - cd $GOPATH/src/$REPO_NAME
     - go build 
