@@ -47,4 +47,4 @@ build-project:
     - CGO_ENABLED=0 GOOS=$GOOS go build
   artifacts:
     paths:
-      - $CI_PROJECT_DIR
+      - receipt-print
