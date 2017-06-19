@@ -43,8 +43,13 @@ build-project:
   script:
     - mkdir -p $GOPATH/src/$REPO_NAME
     - mv $CI_PROJECT_DIR/* $GOPATH/src/$REPO_NAME/
+    - mkdir -p $CI_PROJECT_DIR/artifacts
     - cd $GOPATH/src/$REPO_NAME
-    - CGO_ENABLED=0 GOOS=$GOOS go build
+    - cd api && go build -o $CI_PROJECT_DIR/artifacts/api && cd ..
+    - cd internal-api && go build -o $CI_PROJECT_DIR/artifacts/internal-api && cd ..
+    - cd web && go build -o $CI_PROJECT_DIR/artifacts/web && cd ..
   artifacts:
     paths:
-      - receipt-print
+      - artifacts/api
+      - artifacts/internal-api
+      - artifacts/web
