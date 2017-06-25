@@ -12,49 +12,49 @@ import (
 	"time"
 
 	"github.com/jung-kurt/gofpdf"
-	"github.com/takama/router"
+	"github.com/gorilla/mux"
 	rc "gitlab.com/rtemb/receipt-print/receiptCustom"
 	rs "gitlab.com/rtemb/receipt-print/receiptSchema"
 )
 
 // root derictory
-func root(c *router.Control) {
-	fmt.Fprintf(c.Writer, "Processing URL %s...", c.Request.URL.Path)
+func root(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Processing URL %s...", r.URL.Path)
 }
 
 // logger provides a log of requests
-func logger(c *router.Control) {
-	remoteAddr := c.Request.Header.Get("X-Forwarded-For")
+func logger(w http.ResponseWriter, r *http.Request) {
+	remoteAddr := r.Header.Get("X-Forwarded-For")
 	if remoteAddr == "" {
-		remoteAddr = c.Request.RemoteAddr
+		remoteAddr = r.RemoteAddr
 	}
-	log.Infof("%s %s %s", remoteAddr, c.Request.Method, c.Request.URL.Path)
+	log.Infof("%s %s %s", remoteAddr, r.Method, r.URL.Path)
 }
 
 // GetAllReceipts returns all receipts
-func GetAllReceipts(c *router.Control) {
+func GetAllReceipts(w http.ResponseWriter, r *http.Request) {
 	receipts := Receipts{
 		Receipt{Name: "item1", Price: 1.99, Bill: "18490000009984"},
 		Receipt{Name: "item2", Price: 4.50, Bill: "18490000009985"},
 	}
-	c.Code(http.StatusOK).Body(receipts)
+	responseWithJSON(w, http.StatusOK, receipts);
 }
 
 // CreateCustom prins custom receipt
 // not implemented yet !!
-func CreateCustom(c *router.Control) {
+func CreateCustom(w http.ResponseWriter, r *http.Request) {
 	var Rc rc.PdfDocument
-	data, _ := ioutil.ReadAll(c.Request.Body)
+	data, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(data, &Rc)
 	// todo add printing
-	c.Code(http.StatusOK).Body(Rc)
+	responseWithJSON(w, http.StatusOK, Rc)
 }
 
 //CreateReceipt print receipt and put it to filesystem
 // in ./receipts folder
-func CreateReceipt(c *router.Control) {
+func CreateReceipt(w http.ResponseWriter, r *http.Request) {
 	var Rs rs.ReceiptData
-	data, err := ioutil.ReadAll(c.Request.Body)
+	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Fatalf("Error due reading request body: %s", err)
 	}
@@ -75,13 +75,14 @@ func CreateReceipt(c *router.Control) {
 	Rs.Print(filePath + fileName + ext)
 
 	response := make(map[string]string)
-	response["link"] = c.Request.Host + "/pdf/" + fileName
-	c.Code(http.StatusOK).Body(response)
+	response["link"] = r.Host + "/pdf/" + fileName
+	responseWithJSON(w, http.StatusOK, response)
 }
 
-func giveFile(c *router.Control) {
-	file, _ := ioutil.ReadFile("receipts/" + c.Get(":docName") + ".pdf")
-	http.ServeContent(c.Writer, c.Request, "myfile", time.Now(), bytes.NewReader(file))
+func giveFile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	file, _ := ioutil.ReadFile("receipts/" + vars["docName"]+ ".pdf")
+	http.ServeContent(w, r, "myfile", time.Now(), bytes.NewReader(file))
 }
 
 func CreatePdfFile(receipt Receipt) string {

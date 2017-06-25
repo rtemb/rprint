@@ -3,8 +3,11 @@ package main
 import (
 	"os"
 
+	"net/http"
+	"encoding/json"
 	"github.com/Sirupsen/logrus"
-	"github.com/takama/router"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 )
 
 type Receipts []Receipt
@@ -17,23 +20,21 @@ func main() {
 	if len(appUrl) == 0 {
 		appUrl = "127.0.0.1"
 	}
-	
+
 	if len(port) == 0 {
 		log.Fatal("Required parameter SERVICE_PORT is not set")
 	}
 
-	r := router.New()
-	r.Logger = logger
+	r := mux.NewRouter()
+	r.HandleFunc("/", root)
+	r.HandleFunc("/test", GetAllReceipts)
+	r.HandleFunc("/create", CreateReceipt)
+	r.HandleFunc("/createcustom", CreateCustom)
+	r.HandleFunc("/pdf/{docName}", giveFile)
 
-	r.GET("/", root)
-	r.GET("/test", GetAllReceipts)
-	r.POST("/create", CreateReceipt)
-	r.POST("/createcustom", CreateCustom)
-	r.GET("/pdf/:docName", giveFile)
-
-	log.Info("Service starting up... ", appUrl + ":" + port)
-	r.Listen(appUrl + ":" + port)
-
+	log.Info("Service started up...")
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	log.Fatal(http.ListenAndServe(":" + port, loggedRouter))
 }
 
 type Receipt struct {
@@ -41,4 +42,11 @@ type Receipt struct {
 	Name  string  `json:"Name"`
 	Price float32 `json:"Price"`
 	Bill  string  `json:"Bill"`
+}
+
+func responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+    response, _ := json.Marshal(payload)
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(code)
+    w.Write(response)
 }

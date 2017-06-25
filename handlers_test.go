@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/takama/router"
+	"github.com/gorilla/mux"
 )
 
 // buffer is a special variable to save log messages
@@ -23,8 +23,8 @@ func init() {
 
 // TestHandler is the simplest test: check base (/) URL
 func TestHandlerRoot(t *testing.T) {
-	r := router.New()
-	r.GET("/", root)
+	r := mux.NewRouter()
+	r.HandleFunc("/", root)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()
@@ -51,39 +51,10 @@ func TestHandlerRoot(t *testing.T) {
 	}
 }
 
-// TestLogger checks if logger handler works correctly
-func TestLogger(t *testing.T) {
-	r := router.New()
-	r.Logger = logger
-
-	ts := httptest.NewServer(r)
-	defer ts.Close()
-
-	_, err := http.Get(ts.URL + "/")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	formated := struct {
-		Level string `json:"level"`
-		Msg   string `json:"msg"`
-		Time  string `json:"time"`
-	}{}
-	err = json.NewDecoder(&buffer).Decode(&formated)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	msgParts := strings.Split(formated.Msg, " ")
-	if len(msgParts) != 3 {
-		t.Fatalf("Wrong message was logged: %s", formated.Msg)
-	}
-}
-
 // TestHandler is the simplest test: check base (/) URL
 func TestHandlerReceipt(t *testing.T) {
-	r := router.New()
-	r.POST("/create", CreateReceipt)
+	r := mux.NewRouter()
+	r.HandleFunc("/create", CreateReceipt)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()
