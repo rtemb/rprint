@@ -1,7 +1,7 @@
 Simple app for printing receipts and store it in file system. 
 Provides the link to printed receipt.
 
-Build status: https://travis-ci.org/rtemb/rprint.svg?branch=master
+[![Build Status](https://travis-ci.org/rtemb/rprint.svg?branch=master)](https://travis-ci.org/rtemb/rprint)
 
 ## To create receipt:
 
