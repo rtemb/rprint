@@ -2,8 +2,8 @@ package: gitlab.com/rtemb/receipt-print
 import:
 - package: github.com/gorilla/mux
   version: 1.4.0
-- package: "github.com/gorilla/handlers"
-	version: 1.2.1
+- package: github.com/gorilla/handlers
+  version: 1.2.1
 - package: github.com/jung-kurt/gofpdf
   version: 1.0.0 
 - package: github.com/Sirupsen/logrus
