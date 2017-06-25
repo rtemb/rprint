@@ -1,9 +1,5 @@
 FROM alpine:3.5
 
-ENV SERVICE_PORT 8080
-
-EXPOSE $SERVICE_PORT
-
 COPY rprint /app/
 
 COPY fonts/ /app/fonts/

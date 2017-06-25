@@ -15,9 +15,9 @@ type Receipts []Receipt
 var log = logrus.New()
 
 func main() {
-	port := os.Getenv("SERVICE_PORT")
+	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		log.Fatal("Required parameter SERVICE_PORT is not set")
+		log.Fatal("Required env variable PORT is not set")
 	}
 
 	r := mux.NewRouter()
@@ -27,7 +27,7 @@ func main() {
 	r.HandleFunc("/createcustom", CreateCustom)
 	r.HandleFunc("/pdf/{docName}", giveFile)
 
-	log.Info("Service started up...")
+	log.Info("Service started up at port: " + port)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe("0.0.0.0:" + port, loggedRouter))
 }
