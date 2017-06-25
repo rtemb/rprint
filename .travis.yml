@@ -1,0 +1,15 @@
+language: go
+
+go:
+  - 1.8
+  - tip
+
+before_install:
+  - go get -u github.com/Masterminds/glide
+  - glide install
+
+script: 
+  - go version
+  - go vet $(shell go list $TRAVIS_REPO_SLUG/... | grep -v vendor)
+  - go list -f '{{if len .TestGoFiles}}"gofmt -s -l {{.Dir}}"{{end}}' $(shell go list $REPO_NAME/... | grep -v vendor) | xargs -L 1 sh -c
+  - echo $TRAVIS_REPO_SLUG
