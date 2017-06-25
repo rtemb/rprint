@@ -29,7 +29,7 @@ func main() {
 
 	log.Info("Service started up at port: " + port)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	log.Fatal(http.ListenAndServe("0.0.0.0:" + port, loggedRouter))
+	log.Fatal(http.ListenAndServe(":" + port, loggedRouter))
 }
 
 type Receipt struct {
