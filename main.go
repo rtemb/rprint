@@ -13,6 +13,11 @@ var log = logrus.New()
 
 func main() {
 	port := os.Getenv("SERVICE_PORT")
+	appUrl := os.Getenv("HEROKU_APP_URL")
+	if len(appUrl) == 0 {
+		appUrl = "127.0.0.1"
+	}
+	
 	if len(port) == 0 {
 		log.Fatal("Required parameter SERVICE_PORT is not set")
 	}
@@ -26,8 +31,8 @@ func main() {
 	r.POST("/createcustom", CreateCustom)
 	r.GET("/pdf/:docName", giveFile)
 
-	log.Info("Service starting up... http://127.0.0.1:", port)
-	r.Listen(":" + port)
+	log.Info("Service starting up... ", appUrl + ":" + port)
+	r.Listen(appUrl + ":" + port)
 
 }
 
