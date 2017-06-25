@@ -16,11 +16,6 @@ var log = logrus.New()
 
 func main() {
 	port := os.Getenv("SERVICE_PORT")
-	appUrl := os.Getenv("HEROKU_APP_URL")
-	if len(appUrl) == 0 {
-		appUrl = "127.0.0.1"
-	}
-
 	if len(port) == 0 {
 		log.Fatal("Required parameter SERVICE_PORT is not set")
 	}
@@ -34,7 +29,7 @@ func main() {
 
 	log.Info("Service started up...")
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	log.Fatal(http.ListenAndServe(":" + port, loggedRouter))
+	log.Fatal(http.ListenAndServe("0.0.0.0:" + port, loggedRouter))
 }
 
 type Receipt struct {
