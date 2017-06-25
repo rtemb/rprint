@@ -4,7 +4,7 @@ ENV SERVICE_PORT 8081
 
 EXPOSE $SERVICE_PORT
 
-COPY receipt-print /app/
+COPY rprint /app/
 
 COPY fonts/ /app/fonts/
 RUN ls -la /app/fonts/*
@@ -20,4 +20,4 @@ RUN ls -la /app/receiptSchema/*
 
 WORKDIR app
 
-CMD ["./receipt-print"]
+CMD ["./rprint"]
