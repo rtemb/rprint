@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"encoding/json"
 	"github.com/Sirupsen/logrus"
 	info "github.com/rtemb/rprint/info"
 	"github.com/rtemb/rprint/version"
