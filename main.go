@@ -3,11 +3,10 @@ package main
 import (
 	"os"
 
-	"net/http"
 	"encoding/json"
 	"github.com/Sirupsen/logrus"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
+	"github.com/takama/router"
+	"net/http"
 )
 
 type Receipts []Receipt
@@ -20,16 +19,16 @@ func main() {
 		log.Fatal("Required env variable PORT is not set")
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", root)
-	r.HandleFunc("/test", GetAllReceipts)
-	r.HandleFunc("/create", CreateReceipt)
-	r.HandleFunc("/createcustom", CreateCustom)
-	r.HandleFunc("/pdf/{docName}", giveFile)
+	r := router.New()
+	r.Logger = logger
+	r.GET("/", root)
+	r.GET("/test", GetAllReceipts)
+	r.POST("/create", CreateReceipt)
+	r.POST("/createcustom", CreateCustom)
+	r.GET("/pdf/{docName}", giveFile)
 
+	r.Listen(":" + port)
 	log.Info("Service started up at port: " + port)
-	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	log.Fatal(http.ListenAndServe(":" + port, loggedRouter))
 }
 
 type Receipt struct {
@@ -40,8 +39,8 @@ type Receipt struct {
 }
 
 func responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-    response, _ := json.Marshal(payload)
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(code)
-    w.Write(response)
+	response, _ := json.Marshal(payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
