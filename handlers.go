@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/jung-kurt/gofpdf"
+	rc "github.com/rtemb/rprint/receiptCustom"
+	rs "github.com/rtemb/rprint/receiptSchema"
 	"github.com/takama/router"
-	rc "gitlab.com/rtemb/receipt-print/receiptCustom"
-	rs "gitlab.com/rtemb/receipt-print/receiptSchema"
 )
 
 // root derictory

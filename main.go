@@ -5,6 +5,8 @@ import (
 
 	"encoding/json"
 	"github.com/Sirupsen/logrus"
+	info "github.com/rtemb/rprint/info"
+	"github.com/rtemb/rprint/version"
 	"github.com/takama/router"
 	"net/http"
 )
@@ -27,8 +29,16 @@ func main() {
 	r.POST("/createcustom", CreateCustom)
 	r.GET("/pdf/{docName}", giveFile)
 
-	r.Listen(":" + port)
+	// Readiness and liveness probes for Kubernetes
+	r.GET("/info", func(c *router.Control) {
+		info.Info(c, version.RELEASE, version.REPO, version.COMMIT)
+	})
+	r.GET("/healthz", func(c *router.Control) {
+		c.Code(http.StatusOK).Body(http.StatusText(http.StatusOK))
+	})
+
 	log.Info("Service started up at port: " + port)
+	r.Listen(":" + port)
 }
 
 type Receipt struct {
