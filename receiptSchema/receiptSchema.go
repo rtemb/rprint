@@ -5,18 +5,24 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	gofpdf "github.com/jung-kurt/gofpdf"
+	"math"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 )
 
-const Default_Schema = "default"
+// DefaultSchema Default receipt schema
+const DefaultSchema = "default"
 
 var log = logrus.New()
 
+// ReceiptData - data of receipt
 type ReceiptData struct {
 	Schema   string `json:"schema"`
 	ReceiptS *ReceiptS
 }
 
+// ReceiptS default receipt
 type ReceiptS struct {
 	MPlaceName    string `json:"MPlaceName"`
 	MPlaceAddress string `json:"MPlaceAddress"`
@@ -29,12 +35,14 @@ type ReceiptS struct {
 	Date          string  `json:"Date"`
 }
 
+// Item - item that was sold
 type Item struct {
 	Name     string  `json:"Name"`
 	Quantity float64 `json:"Quantity"`
 	Price    float64 `json:"Price"`
 }
 
+// Print - function which execute printing process
 func (rd *ReceiptData) Print(ffName string) {
 	if rd.Schema != "" {
 		printDefaultReceipt(rd, ffName)
@@ -63,14 +71,16 @@ func printDefaultReceipt(pd *ReceiptData, ffName string) {
 	pdf.Ln(1)
 	printLine("Opeartion Type:", pdf, 0, 7, 0, "L")
 	printLine(pd.ReceiptS.OperationType, pdf, 0, 7, 2, "R")
-	pdf.Ln(4)
+	pdf.Ln(1)
 	printLine("Purchased items:", pdf, 0, 7, 2, "L")
 	pdf.Ln(1)
-	for _, Item := range pd.ReceiptS.Items {
-		printLine(Item.Name, pdf, 40, 7, 0, "L")
-		printLine(strconv.FormatFloat(Item.Quantity, 'f', 2, 64), pdf, 5, 7, 0, "L")
-		printLine(strconv.FormatFloat(Item.Price, 'f', 2, 64), pdf, 0, 7, 2, "R")
-		pdf.Ln(1)
+	delimeter("-", pdf)
+	for idx, Item := range pd.ReceiptS.Items {
+		printLine(strconv.Itoa(idx+1)+". ", pdf, 5, 7, 0, "L")
+		printLine(Item.Name, pdf, 0, 7, 1, "L")
+		printLine("Quantity: "+strconv.FormatFloat(Item.Quantity, 'f', 2, 64), pdf, 0, 7, 1, "L")
+		printLine("Price: "+strconv.FormatFloat(Item.Price, 'f', 2, 64), pdf, 0, 7, 2, "L")
+		delimeter("-", pdf)
 	}
 	pdf.Ln(4)
 	printLine("Tax Percent:", pdf, 0, 7, 0, "L")
@@ -90,10 +100,36 @@ func printDefaultReceipt(pd *ReceiptData, ffName string) {
 	}
 }
 
-func printLine(str string, pdf *gofpdf.Fpdf, y float64, x float64, nl int, align string) {
+// printLine - Print line of text
+// str - string to print
+// pfs - *gofpdf.Fpdf package
+// w - width of printing area
+// h - height of printing aria
+// nl - 1 - print new line after string, 0 - print next string on same line, 2 - below
+// align - align of string: "C" center, "L" left, "R" rigth
+func printLine(str string, pdf *gofpdf.Fpdf, w float64, h float64, nl int, align string) {
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
-	if len(str) > 50 {
-		pdf.CellFormat(y, x, tr(str[:50]), "", nl, align, false, 0, "")
+	charPerline := 46
+	length := utf8.RuneCountInString(str)
+	startPos := 0
+	endPos := charPerline
+	if length > charPerline {
+		lines := int(math.Ceil(float64(length) / float64(charPerline)))
+		// h = float64(lines) * h
+		for idx := 0; idx < lines; idx++ {
+			startPos = idx * charPerline
+			endPos = (idx + 1) * charPerline
+			if endPos >= length {
+				endPos = endPos - (endPos - length)
+			}
+			pdf.CellFormat(w, h, tr(str[startPos:endPos]), "", 1, align, false, 0, "")
+		}
+	} else {
+		pdf.CellFormat(w, h, tr(str), "", nl, align, false, 0, "")
 	}
-	pdf.CellFormat(y, x, tr(str), "", nl, align, false, 0, "")
+}
+
+func delimeter(delimeter string, pdf *gofpdf.Fpdf) {
+	str := strings.Repeat(delimeter, 70)
+	pdf.CellFormat(0, 7, str, "", 1, "L", false, 0, "")
 }
