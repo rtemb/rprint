@@ -10,8 +10,6 @@ import (
 	"net/http"
 )
 
-type Receipts []Receipt
-
 var log = logrus.New()
 
 func main() {
@@ -23,7 +21,6 @@ func main() {
 	r := router.New()
 	r.Logger = logger
 	r.GET("/", root)
-	r.GET("/test", GetAllReceipts)
 	r.POST("/create", CreateReceipt)
 	r.POST("/createcustom", CreateCustom)
 	r.GET("/pdf/{docName}", giveFile)
@@ -38,11 +35,4 @@ func main() {
 
 	log.Info("Service started up at port: " + port)
 	r.Listen(":" + port)
-}
-
-type Receipt struct {
-	Id    int     `json:"Id"`
-	Name  string  `json:"Name"`
-	Price float32 `json:"Price"`
-	Bill  string  `json:"Bill"`
 }
