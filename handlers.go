@@ -32,11 +32,21 @@ func logger(c *router.Control) {
 // CreateCustom prins custom receipt
 // not implemented yet !!
 func CreateCustom(c *router.Control) {
-	var Rc rc.PdfDocument
+	var Rc rc.Receipt
 	data, _ := ioutil.ReadAll(c.Request.Body)
 	json.Unmarshal(data, &Rc)
-	// todo add printing
-	c.Code(http.StatusOK).Body(Rc)
+
+	currDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Can't get current app dirr: %s", err)
+	}
+
+	filePath := currDir + "/receipts/"
+	fileName := strconv.FormatInt(time.Now().UnixNano(), 10)
+	ext := ".pdf"
+
+	Rc.Print(filePath + fileName + ext)
+	c.Code(http.StatusOK)
 }
 
 //CreateReceipt print receipt and put it to filesystem

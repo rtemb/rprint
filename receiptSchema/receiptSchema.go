@@ -115,7 +115,6 @@ func printLine(str string, pdf *gofpdf.Fpdf, w float64, h float64, nl int, align
 	endPos := charPerline
 	if length > charPerline {
 		lines := int(math.Ceil(float64(length) / float64(charPerline)))
-		// h = float64(lines) * h
 		for idx := 0; idx < lines; idx++ {
 			startPos = idx * charPerline
 			endPos = (idx + 1) * charPerline
