@@ -46,7 +46,10 @@ func CreateCustom(c *router.Control) {
 	ext := ".pdf"
 
 	Rc.Print(filePath + fileName + ext)
-	c.Code(http.StatusOK)
+
+	response := make(map[string]string)
+	response["link"] = c.Request.Host + "/pdf/" + fileName
+	c.Code(http.StatusOK).Body(response)
 }
 
 //CreateReceipt print receipt and put it to filesystem

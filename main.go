@@ -23,7 +23,7 @@ func main() {
 	r.GET("/", root)
 	r.POST("/create", CreateReceipt)
 	r.POST("/createcustom", CreateCustom)
-	r.GET("/pdf/{docName}", giveFile)
+	r.GET("/pdf/:docName", giveFile)
 
 	// Readiness and liveness probes for Kubernetes
 	r.GET("/info", func(c *router.Control) {
