@@ -1,4 +1,4 @@
-package info
+package apiv1
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/rtemb/rprint/version"
 	"github.com/takama/router"
 )
 
@@ -27,7 +28,7 @@ type RuntimeInfo struct {
 }
 
 // Info provides JSON API response giving service information
-func Info(c *router.Control, version, repo, commit string) {
+func Info(c *router.Control) {
 	host, _ := os.Hostname()
 	m := new(runtime.MemStats)
 	runtime.ReadMemStats(m)
@@ -41,10 +42,15 @@ func Info(c *router.Control, version, repo, commit string) {
 	info := ServiceInfo{
 		Host:    host,
 		Runtime: rt,
-		Version: version,
-		Repo:    repo,
-		Commit:  commit,
+		Version: version.RELEASE,
+		Repo:    version.REPO,
+		Commit:  version.COMMIT,
 	}
 
 	c.Code(http.StatusOK).Body(info)
+}
+
+// Healthz provides JSON API response giving live service or down
+func Healthz(c *router.Control) {
+	c.Code(http.StatusOK).Body(http.StatusText(http.StatusOK))
 }

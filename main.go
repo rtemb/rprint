@@ -4,10 +4,8 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	info "github.com/rtemb/rprint/info"
-	"github.com/rtemb/rprint/version"
+	apiv1 "github.com/rtemb/rprint/apiv1"
 	"github.com/takama/router"
-	"net/http"
 )
 
 var log = logrus.New()
@@ -20,18 +18,14 @@ func main() {
 
 	r := router.New()
 	r.Logger = logger
-	r.GET("/", root)
-	r.POST("/create", CreateReceipt)
-	r.POST("/createcustom", CreateCustom)
-	r.GET("/pdf/:docName", giveFile)
+	r.GET("/", apiv1.Root)
+	r.POST("/create", apiv1.CreateReceipt)
+	r.POST("/createcustom", apiv1.CreateCustom)
+	r.GET("/pdf/:docName", apiv1.GiveFile)
 
 	// Readiness and liveness probes for Kubernetes
-	r.GET("/info", func(c *router.Control) {
-		info.Info(c, version.RELEASE, version.REPO, version.COMMIT)
-	})
-	r.GET("/healthz", func(c *router.Control) {
-		c.Code(http.StatusOK).Body(http.StatusText(http.StatusOK))
-	})
+	r.GET("/info", apiv1.Info)
+	r.GET("/healthz", apiv1.Healthz)
 
 	log.Info("Service started up at port: " + port)
 	r.Listen(":" + port)

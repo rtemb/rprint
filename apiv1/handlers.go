@@ -1,4 +1,4 @@
-package main
+package apiv1
 
 import (
 	"bytes"
@@ -16,17 +16,8 @@ import (
 )
 
 // root derictory
-func root(c *router.Control) {
+func Root(c *router.Control) {
 	fmt.Fprintf(c.Writer, "Processing URL %s...", c.Request.URL.Path)
-}
-
-// logger provides a log of requests
-func logger(c *router.Control) {
-	remoteAddr := c.Request.Header.Get("X-Forwarded-For")
-	if remoteAddr == "" {
-		remoteAddr = c.Request.RemoteAddr
-	}
-	log.Infof("%s %s %s", remoteAddr, c.Request.Method, c.Request.URL.Path)
 }
 
 // CreateCustom prins custom receipt
@@ -81,7 +72,7 @@ func CreateReceipt(c *router.Control) {
 	c.Code(http.StatusOK).Body(response)
 }
 
-func giveFile(c *router.Control) {
+func GiveFile(c *router.Control) {
 	file, _ := ioutil.ReadFile("receipts/" + c.Get(":docName") + ".pdf")
 	http.ServeContent(c.Writer, c.Request, "myfile", time.Now(), bytes.NewReader(file))
 }
