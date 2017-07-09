@@ -18,7 +18,7 @@ func main() {
 
 	r := router.New()
 	r.Logger = logger
-	r.GET("/", apiv1.Root)
+	r.GET("/", Root)
 	r.POST("/v1/create", apiv1.CreateReceipt)
 	r.POST("/v1/createcustom", apiv1.CreateCustom)
 	r.GET("/v1/pdf/:docName", apiv1.GiveFile)

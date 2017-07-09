@@ -54,7 +54,7 @@ func TestLogger(t *testing.T) {
 // TestHandler is the simplest test: check base (/) URL
 func TestHandlerRoot(t *testing.T) {
 	r := router.New()
-	r.GET("/", apiv1.Root)
+	r.GET("/", Root)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()

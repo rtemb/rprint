@@ -3,7 +3,6 @@ package apiv1
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -14,11 +13,6 @@ import (
 	rs "github.com/rtemb/rprint/receiptSchema"
 	"github.com/takama/router"
 )
-
-// root derictory
-func Root(c *router.Control) {
-	fmt.Fprintf(c.Writer, "Processing URL %s...", c.Request.URL.Path)
-}
 
 // CreateCustom prins custom receipt
 // not implemented yet !!

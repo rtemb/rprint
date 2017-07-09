@@ -19,6 +19,11 @@ func logger(c *router.Control) {
 	log.Infof("%s %s %s", remoteAddr, c.Request.Method, c.Request.URL.Path)
 }
 
+// root derictory
+func Root(c *router.Control) {
+	fmt.Fprintf(c.Writer, "Processing URL %s...", c.Request.URL.Path)
+}
+
 // ServiceInfo defines HTTP API response giving service information
 type ServiceInfo struct {
 	Host    string       `json:"host"`
