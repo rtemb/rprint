@@ -24,8 +24,8 @@ func main() {
 	r.GET("/v1/pdf/:docName", apiv1.GiveFile)
 
 	// Readiness and liveness probes for Kubernetes
-	r.GET("/info", apiv1.Info)
-	r.GET("/healthz", apiv1.Healthz)
+	r.GET("/info", Info)
+	r.GET("/healthz", Healthz)
 
 	log.Info("Service started up at port: " + port)
 	r.Listen(":" + port)
