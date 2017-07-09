@@ -39,7 +39,7 @@ func CreateCustom(c *router.Control) {
 	Rc.Print(filePath + fileName + ext)
 
 	response := make(map[string]string)
-	response["link"] = c.Request.Host + "/pdf/" + fileName
+	response["link"] = c.Request.Host + "/v1/pdf/" + fileName
 	c.Code(http.StatusOK).Body(response)
 }
 
@@ -68,7 +68,7 @@ func CreateReceipt(c *router.Control) {
 	Rs.Print(filePath + fileName + ext)
 
 	response := make(map[string]string)
-	response["link"] = c.Request.Host + "/pdf/" + fileName
+	response["link"] = c.Request.Host + "/v1/pdf/" + fileName
 	c.Code(http.StatusOK).Body(response)
 }
 

@@ -19,9 +19,9 @@ func main() {
 	r := router.New()
 	r.Logger = logger
 	r.GET("/", apiv1.Root)
-	r.POST("/create", apiv1.CreateReceipt)
-	r.POST("/createcustom", apiv1.CreateCustom)
-	r.GET("/pdf/:docName", apiv1.GiveFile)
+	r.POST("/v1/create", apiv1.CreateReceipt)
+	r.POST("/v1/createcustom", apiv1.CreateCustom)
+	r.GET("/v1/pdf/:docName", apiv1.GiveFile)
 
 	// Readiness and liveness probes for Kubernetes
 	r.GET("/info", apiv1.Info)

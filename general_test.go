@@ -84,13 +84,13 @@ func TestHandlerRoot(t *testing.T) {
 // TestHandler is the simplest test: check base (/) URL
 func TestHandlerReceipt(t *testing.T) {
 	r := router.New()
-	r.POST("/create", apiv1.CreateReceipt)
+	r.POST("/v1/create", apiv1.CreateReceipt)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
 	var jsonStr = []byte(`{ "Schema": "default", "ReceiptS": {  "MPlaceName": "Exmaple header",  "MPlaceAddress": "www.example.com",  "MPlaceINN": "00000111111239990",  "OperatinType": "Sell",  "Items": [   {    "Name": "Raincoat",    "Quantity": 1.000,    "Price": 100.0   },    {    "Name": "Black Hat",    "Quantity": 1.000,    "Price": 33.0   },   {    "Name": "Gloves",    "Quantity": 1.000,    "Price": 15.0   }  ],  "TaxPercent": "18%",  "Total": 148.0,  "FiscalNumber": "000000000011198",  "Date": "2017-06-11 23:21:11" }}`)
-	res, err := http.Post(ts.URL+"/create", "text/plain", bytes.NewBuffer(jsonStr))
+	res, err := http.Post(ts.URL+"/v1/create", "text/plain", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
