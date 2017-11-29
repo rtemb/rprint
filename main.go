@@ -10,10 +10,13 @@ import (
 
 var log = logrus.New()
 
+const defaultAppPort = "8080"
+
 func main() {
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		log.Fatal("Required env variable PORT is not set")
+		log.Warn("Required env variable PORT is not set! Used default PORT")
+		port = defaultAppPort
 	}
 
 	r := router.New()
@@ -27,6 +30,6 @@ func main() {
 	r.GET("/info", Info)
 	r.GET("/healthz", Healthz)
 
-	log.Info("Service started up at port: " + port)
+	log.Info("Service run at PORT: " + port)
 	r.Listen(":" + port)
 }

@@ -19,7 +19,7 @@ func logger(c *router.Control) {
 	log.Infof("%s %s %s", remoteAddr, c.Request.Method, c.Request.URL.Path)
 }
 
-// root derictory
+// Root url
 func Root(c *router.Control) {
 	fmt.Fprintf(c.Writer, "Processing URL %s...", c.Request.URL.Path)
 }
